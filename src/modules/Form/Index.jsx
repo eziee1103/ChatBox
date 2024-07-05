@@ -5,12 +5,38 @@ import { useNavigate } from "react-router-dom";
 const Form = ({ isSignInPage = false }) => {
   const [data, setData] = useState({
     ...(!isSignInPage && {
-      fullName: "",
+      fullname: "",
     }),
     email: "",
     password: "",
   });
   const navigate = useNavigate();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    console.log("<<data-submit", data);
+    const res = await fetch(
+      `http://localhost:8000/api/${isSignInPage ? "login" : "register"}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    if (res.status === 400) {
+      alert("invalid Credentials");
+    } else {
+      const resdata = await res.json();
+      // console.log(">>>data", resdata);
+      if (resdata.token) {
+        localStorage.setItem("user:token", resdata.token);
+        localStorage.setItem("user:detail", JSON.stringify(resdata.user));
+        navigate("/");
+      }
+    }
+  };
   return (
     <>
       <div className="bg-light h-screen flex items-center">
@@ -24,7 +50,7 @@ const Form = ({ isSignInPage = false }) => {
               : "Sign up to get started"}
           </div>
           <form
-            onSubmit={() => console.log("submitted")}
+            onSubmit={(e) => handleSubmit(e)}
             className="flex flex-col items-center w-full"
           >
             {!isSignInPage && (
@@ -34,9 +60,9 @@ const Form = ({ isSignInPage = false }) => {
                 label="Full Name"
                 inputClassName="mb-6 "
                 className="w-1/2 "
-                value={data.fullName}
+                value={data.fullname}
                 onchange={(e) => {
-                  setData({ ...data, fullName: e.target.value });
+                  setData({ ...data, fullname: e.target.value });
                 }}
                 isRequired
               />
