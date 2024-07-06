@@ -13,38 +13,38 @@ const DashBoard = () => {
   const [people, setPeople] = useState([]);
 
   console.log(messages, "message");
-  // const socketRef = useRef(null);
-  const socket = io("http://localhost:8080");
 
-  useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Connected to socket server");
-      socket.emit("addUser", user?.id);
-    });
+  // const socket = io("http://localhost:3001");
 
-    // socketRef.current = io("http://localhost:8080");
-    // const socket = socketRef.current;
-    // socket.emit("addUser", user?.id);
+  // useEffect(() => {
+  //   socket.on("connect", () => {
+  //     console.log("Connected to socket server");
+  //     socket.emit("addUser", user?.id);
+  //   });
 
-    socket.on("getUsers", (users) => {
-      console.log("Received message:", users);
-      console.log("active users", users);
-    });
+  //   // socketRef.current = io("http://localhost:8080");
+  //   // const socket = socketRef.current;
+  //   // socket.emit("addUser", user?.id);
 
-    socket.on("getMessage", (data) => {
-      setMessages((prev) => ({
-        ...prev,
-        messages: [
-          ...prev.messages,
-          { user: data.user, message: data.message, id: data.id },
-        ],
-      }));
-    });
+  //   socket.on("getUsers", (users) => {
+  //     console.log("Received message:", users);
+  //     console.log("active users", users);
+  //   });
 
-    return () => {
-      socket.disconnect();
-    };
-  }, [user]);
+  //   socket.on("getMessage", (data) => {
+  //     setMessages((prev) => ({
+  //       ...prev,
+  //       messages: [
+  //         ...prev.messages,
+  //         { user: data.user, message: data.message, id: data.id },
+  //       ],
+  //     }));
+  //   });
+
+  //   return () => {
+  //     // socket.disconnect();
+  //   };
+  // }, [user]);
 
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("user:detail"));
@@ -53,7 +53,7 @@ const DashBoard = () => {
         `http://localhost:8000/api/conversation/${loggedInUser?.id}`
       );
       const resData = await res.json();
-
+      console.log("detal>", resData);
       setConversation(resData);
     };
 
@@ -72,23 +72,23 @@ const DashBoard = () => {
 
   const fetchMessages = async (conversationId, reciever) => {
     const res = await fetch(
-      `http://localhost:8000/api/message/${conversationId}?senderId=${user?.id}&&recieverId=${reciever?.recieverId}`
+      `http://localhost:8000/api/message/${conversationId}?senderId=${user?.id}&&recieverId=${reciever?._id}`
     );
     const resData = await res.json();
+    console.log("fetchmesages", resData);
     setMessages({ messages: resData, reciever: reciever, conversationId });
   };
 
   const sendMessage = async () => {
     if (inputmessage.trim() === "") return;
-    console.log("resId", messages?.reciever?._id);
+    console.log("msged", messages);
 
-    // const socket = socketRef.current;
-    socket?.emit("sendMessage", {
-      conversationId: messages?.conversationId,
-      senderId: user?.id,
-      message: inputmessage,
-      recieverId: messages?.reciever?._id,
-    });
+    // socket?.emit("sendMessage", {
+    //   conversationId: messages?.conversationId,
+    //   senderId: user?.id,
+    //   message: inputmessage,
+    //   recieverId: messages?.reciever?._id,
+    // });
 
     setInputmessage("");
 
@@ -101,7 +101,7 @@ const DashBoard = () => {
         conversationId: messages?.conversationId,
         senderId: user?.id,
         message: inputmessage,
-        recieverId: messages?.reciever?.recieverId,
+        recieverId: messages?.reciever?._id,
       }),
     });
   };
@@ -278,6 +278,7 @@ const DashBoard = () => {
         <div className="w-[25%] bg-light border border-black h-screen">
           <div>people</div>
           <div>
+            {console.log("people", people)}
             {people.length > 0 ? (
               people.map(({ userId, user }) => {
                 return (

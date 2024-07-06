@@ -2,6 +2,7 @@ import { React, useState } from "react";
 import Input from "../../components/Input/Index";
 import Button from "../../components/Button/Index";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 const Form = ({ isSignInPage = false }) => {
   const [data, setData] = useState({
     ...(!isSignInPage && {
@@ -13,29 +14,28 @@ const Form = ({ isSignInPage = false }) => {
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     console.log("<<data-submit", data);
-    const res = await fetch(
+
+    const result = await axios.post(
       `http://localhost:8000/api/${isSignInPage ? "login" : "register"}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }
+      data
     );
-    if (res.status === 400) {
-      alert("invalid Credentials");
-    } else {
-      const resdata = await res.json();
-      // console.log(">>>data", resdata);
-      if (resdata.token) {
-        localStorage.setItem("user:token", resdata.token);
-        localStorage.setItem("user:detail", JSON.stringify(resdata.user));
-        navigate("/");
+    const register = async () => {
+      try {
+        console.log(">>>data", result);
+        if (result.data.token) {
+          console.log("hii");
+          localStorage.setItem("user:token", result.data.token);
+          localStorage.setItem("user:detail", JSON.stringify(result.data.user));
+          navigate("/");
+        } else {
+          navigate("/signin");
+        }
+      } catch (error) {
+        console.log(error);
       }
-    }
+    };
+    register();
   };
   return (
     <>
