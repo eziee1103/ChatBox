@@ -14,37 +14,37 @@ const DashBoard = () => {
 
   console.log(messages, "message");
 
-  // const socket = io("http://localhost:3001");
+  const socket = io("http://localhost:3001");
 
-  // useEffect(() => {
-  //   socket.on("connect", () => {
-  //     console.log("Connected to socket server");
-  //     socket.emit("addUser", user?.id);
-  //   });
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected to socket server");
+      socket.emit("addUser", user?.id);
+    });
 
-  //   // socketRef.current = io("http://localhost:8080");
-  //   // const socket = socketRef.current;
-  //   // socket.emit("addUser", user?.id);
+    // socketRef.current = io("http://localhost:8080");
+    // const socket = socketRef.current;
+    // socket.emit("addUser", user?.id);
 
-  //   socket.on("getUsers", (users) => {
-  //     console.log("Received message:", users);
-  //     console.log("active users", users);
-  //   });
+    socket.on("getUsers", (users) => {
+      console.log("Received message:", users);
+      console.log("active users", users);
+    });
 
-  //   socket.on("getMessage", (data) => {
-  //     setMessages((prev) => ({
-  //       ...prev,
-  //       messages: [
-  //         ...prev.messages,
-  //         { user: data.user, message: data.message, id: data.id },
-  //       ],
-  //     }));
-  //   });
+    socket.on("getMessage", (data) => {
+      setMessages((prev) => ({
+        ...prev,
+        messages: [
+          ...prev.messages,
+          { user: data.user, message: data.message, id: data.id },
+        ],
+      }));
+    });
 
-  //   return () => {
-  //     // socket.disconnect();
-  //   };
-  // }, [user]);
+    return () => {
+      socket.disconnect();
+    };
+  }, [user]);
 
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("user:detail"));
@@ -53,7 +53,7 @@ const DashBoard = () => {
         `http://localhost:8000/api/conversation/${loggedInUser?.id}`
       );
       const resData = await res.json();
-      console.log("detal>", resData);
+      // console.log("detal>", resData);
       setConversation(resData);
     };
 
@@ -64,7 +64,12 @@ const DashBoard = () => {
     const fetchUsers = async () => {
       const res = await fetch(`http://localhost:8000/api/users/${user?.id}`);
       const resData = await res.json();
-      setPeople(resData);
+      console.log(resData,"peoplesss")
+      if(resData[0]!==null ){
+
+        setPeople(resData);
+
+      }
     };
 
     fetchUsers();
@@ -72,7 +77,7 @@ const DashBoard = () => {
 
   const fetchMessages = async (conversationId, reciever) => {
     const res = await fetch(
-      `http://localhost:8000/api/message/${conversationId}?senderId=${user?.id}&&recieverId=${reciever?._id}`
+      `http://localhost:8000/api/message/${conversationId}?senderId=${user?.id}&&recieverId=${reciever?.recieverId}`
     );
     const resData = await res.json();
     console.log("fetchmesages", resData);
@@ -83,12 +88,12 @@ const DashBoard = () => {
     if (inputmessage.trim() === "") return;
     console.log("msged", messages);
 
-    // socket?.emit("sendMessage", {
-    //   conversationId: messages?.conversationId,
-    //   senderId: user?.id,
-    //   message: inputmessage,
-    //   recieverId: messages?.reciever?._id,
-    // });
+    socket?.emit("sendMessage", {
+      conversationId: messages?.conversationId,
+      senderId: user?.id,
+      message: inputmessage,
+      recieverId: messages?.reciever?._id,
+    });
 
     setInputmessage("");
 
@@ -105,6 +110,7 @@ const DashBoard = () => {
       }),
     });
   };
+  console.log(people,"check")
 
   return (
     <>
@@ -278,9 +284,9 @@ const DashBoard = () => {
         <div className="w-[25%] bg-light border border-black h-screen">
           <div>people</div>
           <div>
-            {console.log("people", people)}
+            
             {people.length > 0 ? (
-              people.map(({ userId, user }) => {
+              people.map(({  user }) => {
                 return (
                   <>
                     <div className="flex items-center py-4 border-b border-b-gray-300">
