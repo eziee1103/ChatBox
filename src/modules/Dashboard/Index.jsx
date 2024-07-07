@@ -11,27 +11,23 @@ const DashBoard = () => {
   const [messages, setMessages] = useState({ messages: [] });
   const [inputmessage, setInputmessage] = useState("");
   const [people, setPeople] = useState([]);
+  const [socket, setSocket] = useState();
+  const messageRef = useRef(null)
 
   console.log(messages, "message");
-
-  const socket = io("http://localhost:3001");
+  useEffect(() => {
+    const newSocket = io("http://localhost:3001");
+    setSocket(newSocket);
+  }, []);
+  
 
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Connected to socket server");
-      socket.emit("addUser", user?.id);
-    });
-
-    // socketRef.current = io("http://localhost:8080");
-    // const socket = socketRef.current;
-    // socket.emit("addUser", user?.id);
-
-    socket.on("getUsers", (users) => {
-      console.log("Received message:", users);
+    socket?.emit("addUser", user?.id);
+      socket?.on("getUsers", (users) => {
       console.log("active users", users);
     });
 
-    socket.on("getMessage", (data) => {
+    socket?.on("getMessage", (data) => {
       setMessages((prev) => ({
         ...prev,
         messages: [
@@ -41,10 +37,12 @@ const DashBoard = () => {
       }));
     });
 
-    return () => {
-      socket.disconnect();
-    };
-  }, [user]);
+  
+  }, [socket]);
+
+  useEffect(()=>{
+    messageRef?.current?.scrollIntoView({behavior:"smooth"})
+  },[messages?.messages])
 
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("user:detail"));
@@ -77,7 +75,7 @@ const DashBoard = () => {
 
   const fetchMessages = async (conversationId, reciever) => {
     const res = await fetch(
-      `http://localhost:8000/api/message/${conversationId}?senderId=${user?.id}&&recieverId=${reciever?.recieverId}`
+      `http://localhost:8000/api/message/${conversationId}?senderId=${user?.id}&&recieverId=${reciever?._id}`
     );
     const resData = await res.json();
     console.log("fetchmesages", resData);
@@ -115,7 +113,7 @@ const DashBoard = () => {
   return (
     <>
       <div className="w-screen flex">
-        <div className="w-[25%]  h-screen bg-secondary">
+        <div className="w-[25%]  h-screen bg-secondary overflow-scroll">
           <div className="justify-start items-center flex ml-10 my-4">
             <div className="border border-primary p-[8px] rounded-full">
               <img src={Avatar} width={50} height={50} alt="" />
@@ -126,7 +124,7 @@ const DashBoard = () => {
             </div>
           </div>
           <hr />
-          <div className="ml-4 mt-5">
+          <div className="ml-4 mt-2 p-4">
             <div className="text-primary text-lg">Messages</div>
             <div>
               {conversation.length > 0 ? (
@@ -134,7 +132,7 @@ const DashBoard = () => {
                   // console.log(conversationId, "covo");
                   return (
                     <>
-                      <div className="flex items-center py-4 border-b border-b-gray-300">
+                      <div className="flex items-center p-4 border-b border-b-gray-300">
                         <div
                           className="cursor-pointer flex items-center "
                           onClick={() => {
@@ -199,12 +197,12 @@ const DashBoard = () => {
               </svg>
             </div>
           )}
-          <div className="h-[75%]  w-full overflow-y-scroll shadow-sm">
+          <div className="h-[75%]  w-full overflow-scroll shadow-sm">
             <div className=" p-14 ">
               {messages?.messages?.length > 0 ? (
                 messages?.messages?.map(({ message, user: { _id } = {} }) => {
                   return (
-                    <div
+                    <>                    <div
                       className={`max-w-[40%] rounded-b-xl p-4 mb-6 ${
                         _id === user?.id
                           ? "bg-primary text-white rounded-tl-xl ml-auto"
@@ -213,6 +211,10 @@ const DashBoard = () => {
                     >
                       {message}
                     </div>
+                    <div ref={messageRef}>
+                    </div>
+                    </>
+
                   );
                 })
               ) : (
@@ -281,7 +283,7 @@ const DashBoard = () => {
             </div>
           )}
         </div>
-        <div className="w-[25%] bg-light border border-black h-screen">
+        <div className="w-[25%] bg-blue-50  p-5  h-screen overflow-scroll">
           <div>people</div>
           <div>
             
