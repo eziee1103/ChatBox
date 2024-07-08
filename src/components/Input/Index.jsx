@@ -7,16 +7,18 @@ const Input = ({
   placeholder = "",
   isRequired = false,
   className = "",
+  labebClassName = "",
   inputClassName = "",
   value = "",
   onchange = () => {},
+  onKeyDown = () => {},
 }) => {
   return (
     <>
       <div className={`${className}`}>
         <label
           htmlFor={name}
-          className="block  text-sm font-medium text-gray-900"
+          className={`block mb-2 text-sm font-medium text-gray-900 ${labebClassName}`}
         >
           {label}
         </label>
@@ -28,6 +30,7 @@ const Input = ({
           type={type}
           value={value}
           onChange={onchange}
+          onKeyDown={onKeyDown}
         />
       </div>
     </>

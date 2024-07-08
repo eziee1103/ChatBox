@@ -39,10 +39,10 @@ const Form = ({ isSignInPage = false }) => {
   };
   return (
     <>
-      <div className="bg-light h-screen flex items-center">
-        <div className="bg-white w-[600px] h-[800px] rounded-lg flex flex-col justify-center items-center shadow-lg mx-auto  ">
-          <div className="text-4xl font-extrabold ">
-            Welcome {isSignInPage && "back"}
+      <div className="bg-my-gradient backdrop-blur-3xl  h-screen flex items-center text-white">
+        <div className="bg-my-gradient w-[500px] border border-white p-5 rounded-lg flex flex-col justify-center m-5 items-center shadow-lg mx-auto  ">
+          <div className="text-3xl font-extrabold ">
+            Welcome {isSignInPage && "back"} to chat Box
           </div>
           <div className="text-xl font-light mb-14">
             {isSignInPage
@@ -58,8 +58,9 @@ const Form = ({ isSignInPage = false }) => {
                 name="name"
                 placeholder="Enter Your Name"
                 label="Full Name"
-                inputClassName="mb-6 "
-                className="w-1/2 "
+                inputClassName="mb-4 "
+                className="w-2/3"
+                labebClassName=" text-white"
                 value={data.fullname}
                 onchange={(e) => {
                   setData({ ...data, fullname: e.target.value });
@@ -72,8 +73,9 @@ const Form = ({ isSignInPage = false }) => {
               type="email"
               placeholder="Enter Your Email"
               label="Email Address"
-              inputClassName="mb-6 "
-              className="w-1/2 "
+              inputClassName="mb-4 "
+              className="w-2/3"
+              labebClassName=" text-white"
               value={data.email}
               onchange={(e) => {
                 setData({ ...data, email: e.target.value });
@@ -85,8 +87,9 @@ const Form = ({ isSignInPage = false }) => {
               type="password"
               placeholder="Enter Your Password"
               label="Password"
-              inputClassName="mb-6 "
-              className="w-1/2 "
+              inputClassName="mb-8 "
+              className="w-2/3"
+              labebClassName=" text-white"
               value={data.password}
               onchange={(e) => {
                 setData({ ...data, password: e.target.value });
@@ -95,19 +98,19 @@ const Form = ({ isSignInPage = false }) => {
             />
             <Button
               label={isSignInPage ? "Sign in" : "Sign up"}
-              className="w-1/2 mb-2"
+              className="w-2/3 mb-2 bg-my-gradient border border-white"
               type="submit"
             />
           </form>
-          <div>
+          <div className="text-xs">
             {!isSignInPage
               ? "Already have an account?"
               : "Didn't have an account?"}
             <span
               onClick={() => navigate(`/${isSignInPage ? "signup" : "signin"}`)}
-              className="text-primary cursor-pointer underline"
+              className="text-primary cursor-pointer underline "
             >
-              {!isSignInPage ? "Sign in" : "Sign up"}
+              {!isSignInPage ? " Sign in" : " Sign up"}
             </span>
           </div>
         </div>
