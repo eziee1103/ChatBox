@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import Avatar from "../../assets/avatar-svgrepo-com.svg";
+import logo from "../../assets/logo.svg";
 import Input from "../../components/Input/Index";
 import { io } from "socket.io-client";
 
@@ -18,7 +19,30 @@ const DashBoard = () => {
   useEffect(() => {
     const newSocket = io("http://localhost:3001");
     setSocket(newSocket);
+    // return socket.close()
   }, []);
+
+  //    useEffect(() => {
+  //      if(user){
+  // const newSocket = io("http://localhost:5000",{
+  //   query:{
+  //     userId:user?.id
+  //   }});
+  //      setSocket(newSocket);
+
+  //     socket.on("getOnlineUsers",(users)=>{
+  //       setOnlineUsers(users)
+  //     })
+
+  //      return socket.close()
+  //     } else{
+  //       if(socket){
+  //         socket.close();
+  //         setSocket(null)
+  //       }
+  //     }
+
+  //    }, [user]);
 
   useEffect(() => {
     socket?.emit("addUser", user?.id);
@@ -48,7 +72,7 @@ const DashBoard = () => {
         `http://localhost:8000/api/conversation/${loggedInUser?.id}`
       );
       const resData = await res.json();
-      // console.log("detal>", resData);
+
       setConversation(resData);
     };
 
@@ -132,16 +156,15 @@ const DashBoard = () => {
             <div>
               {conversation.length > 0 ? (
                 conversation.map(({ conversationId, user }) => {
-                  // console.log(conversationId, "covo");
                   return (
                     <>
-                      <div className="flex items-center p-4 border-b border-b-gray-500">
-                        <div
-                          className="cursor-pointer flex items-center "
-                          onClick={() => {
-                            fetchMessages(conversationId, user);
-                          }}
-                        >
+                      <div
+                        className="flex items-center cursor-pointer p-4 border-b border-b-gray-500"
+                        onClick={() => {
+                          fetchMessages(conversationId, user);
+                        }}
+                      >
+                        <div className=" flex items-center ">
                           <div className="border border-red-300 p-[8px] rounded-full">
                             <img src={Avatar} width={32} height={32} alt="" />
                           </div>
@@ -200,11 +223,22 @@ const DashBoard = () => {
               </svg> */}
             </div>
           ) : (
-            <div className="flex flex-col justify-center items-center h-full">
-              <div className="text-center ">
-                <h2 className="text-gray-400 text-xl">Please select a chat</h2>
+            <>
+              <div className="flex flex-col justify-center items-center h-full">
+                <div>
+                  <img src={logo} alt="" />
+                </div>
+                <div className="text-center mt-5 ">
+                  <h2 className="text-gray-800 font-bold text-xl">
+                    Welcome to Federal Boxx Chat
+                  </h2>
+                  <p className="text-gray-400 mt-2">
+                    Please select an admin to start chatting and console your
+                    Enquires.
+                  </p>
+                </div>
               </div>
-            </div>
+            </>
           )}
           <div className="h-[75%]  w-full overflow-scroll  ">
             <div className=" p-14 ">
@@ -243,7 +277,7 @@ const DashBoard = () => {
                 inputClassName=" mb-0  border-2 border-usred  rounded-full bg-blue-50 focus:ring-0 focus:border-2 focus:border-usred  outline-none"
               />
               <div
-                className={`ml-4 p-2 rounded-full bg-usred text-white cursor-pointer ${
+                className={`ml-4 p-2 rounded-full bg-usred  hover:bg-primary cursor-pointer ${
                   !inputmessage && "pointer-events-none"
                 }`}
                 onClick={(e) => {
@@ -299,13 +333,13 @@ const DashBoard = () => {
               people.map(({ user }) => {
                 return (
                   <>
-                    <div className="flex items-center py-4 border-b border-b-gray-500">
-                      <div
-                        className="cursor-pointer flex items-center "
-                        onClick={() => {
-                          fetchMessages("new", user);
-                        }}
-                      >
+                    <div
+                      className="flex items-center cursor-pointer py-4 border-b border-b-gray-500"
+                      onClick={() => {
+                        fetchMessages("new", user);
+                      }}
+                    >
+                      <div className=" flex items-center ">
                         <div className="border border-blue-300 p-[8px] rounded-full">
                           <img src={Avatar} width={32} height={32} alt="" />
                         </div>
