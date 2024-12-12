@@ -42,7 +42,7 @@ const Form = ({ isSignInPage = false }) => {
       <div className="bg-my-gradient backdrop-blur-3xl  h-screen flex items-center text-white">
         <div className="bg-my-gradient w-[500px] border border-white p-5 rounded-lg flex flex-col justify-center m-5 items-center shadow-lg mx-auto  ">
           <div className="text-3xl font-extrabold ">
-            Vignesh {isSignInPage && "back"} to chat Box
+            Vigneshs {isSignInPage && "back"} to chat Box
           </div>
           <div className="text-xl font-light mb-14">
             {isSignInPage
